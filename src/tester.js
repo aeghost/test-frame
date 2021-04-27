@@ -256,14 +256,16 @@ class CheckResult {
 
   validate = (v, f) => wrap(() => v.reduce((acc, v) => acc && f(v), true));
 
-  exists = (v) => this.validate(v, v => v !== undefined);
+  exists = (v) => {
+    return wrap(() => v.reduce((acc, s) => acc && s !== undefined, true));
+  };
   fields = (v, sl) => {
     const keys = Object.keys(v);
-    this.validade(sl, s => keys.includes(s));
+    return wrap(() => sl.reduce((acc, s) => acc && keys.includes(s), true));
   };
   exactFields = (v, sl) => {
     const keys = Object.keys(v);
-    sl === keys;
+    return sl === keys;
   }
 
   existsOrError = (v, src) =>
