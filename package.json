@@ -3,14 +3,16 @@
   "version": "0.1.0",
   "main": "index.js",
   "scripts": {
-    "test1": "node ./tests/hello/hello.js --help",
-    "test2": "node ./tests/hello/hello.js" 
+    "test-hello": "node ./tests/hello/hello.js"
   },
   "dependencies": {
     "axios": "^0.19.2",
     "colors": "^1.4.0",
     "commander": "^5.1.0",
     "sleep": "^6.2.0"
+  },
+  "devDependencies": {
+    "express": "^4.17.1"
   },
   "license": "MIT"
 }

@@ -1,9 +1,11 @@
 const ApiTest = require('../../index');
+const Check = ApiTest.check;
 
 ApiTest.get(
   "/hello",
   (v) =>
-    Frame.check.typ.string(v) && Frame.check.includes(v, 'hello'),
+    Check.typ.string(v)
+    && Check.typ.includes(v, 'hello'),
   "Get hello message, laxist test",
   'STANDARD API'
 );
@@ -16,12 +18,12 @@ ApiTest.get(
   'STANDARD API'
 );
 
-ApiTest.check.success = v => !!v['result'] && v.result === 'success';
+Check.success = v => !!v['result'] && v.result === 'success';
 
 ApiTest.testFor(['1', '2', '3'], s => {
   ApiTest.get(
     `add/user/foo_${s}`,
-    ApiTest.check.success,
+    Check.success,
     "Add user, validate operation",
     'USER MANAGEMENT API'
   );
@@ -29,11 +31,11 @@ ApiTest.testFor(['1', '2', '3'], s => {
   ApiTest.get(
     `/user/${s}`,
     v =>
-      ApiTest.check.success(v)
-      && ApiTest.check.fields(v, ['result', 'datas'])
-      && ApiTest.check.fields(v.datas, ['name'])
-      && ApiTest.check.typ.string(v.datas.name)
-      && v.datas.name === 'foo',
+      Check.success(v)
+      && Check.fields(v, ['result', 'datas'])
+      && Check.fields(v.datas, ['name'])
+      && Check.typ.string(v.datas.name)
+      && v.datas.name.includes('foo'),
     "Get user, rigourous validation",
     'USER MANAGEMENT API'
   );
