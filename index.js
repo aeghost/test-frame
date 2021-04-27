@@ -127,7 +127,14 @@ class TestFrame {
 
     const webConnector = axios.create(webConnectorConfiguration);
 
-    this.Frame = new _TestFrame(webConnector);
+    this.Frame = new _TestFrame(webConnector, (() => {
+      try {
+        return parseInt(Configurate.conf.await.definedValue);
+      } catch (e) {
+        console.error(e);
+        return 300;
+      }
+    })());
     this.Frame.only = Configurate.conf.matching.definedValue;
 
     this.run = this.Frame.run;
