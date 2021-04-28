@@ -1,12 +1,12 @@
 # TestFrame v0.1.0
 
-The objective is just to provide a minimalist and simple frame to send easily and validate a HTTP API like REST based or GraphQL based API.
+The objective is just to provide a minimalist and simple frame to validate a HTTP/S API like REST based or GraphQL based API.
 
-It should stay explicit and easy to use and customize.
+It should stay explicit, easy to use and to customize.
 
 # Deps
 
-You may have to dispose of Python because of "program" package, will disapear.
+You may have to dispose of Python because of "commander" package, will disapear.
 
 ```json
 {
@@ -19,12 +19,15 @@ You may have to dispose of Python because of "program" package, will disapear.
 
 # Usage
 
-First install this package and include it into any js file:
+Install this package and include it into any js file :
 
 ```js
 const ApiTest = require('../../index');
-const Check = ApiCheck.check;
 
+// Package come with a Check module that has predefined functions to check common types.
+const Check = ApiTest.check;
+
+// Send GET message to /hello and check the returned value is a string and strictly 'hello'.
 ApiTest.get(
   '/hello'
   , (v) =>
@@ -34,15 +37,50 @@ ApiTest.get(
   , 'STANDARD API'
 );
 
+// You can define custom common functions by overriding Check ones.
+Check.success = v => !!v['result'] && v.result === 'success';
+
+// Send POST message with { name: 'foo_0' } payload and check return according Check.success.
+ApiTest.post(
+    `/post/user`
+    , { name: 'foo_0' }
+    , (v) => Check.success(v)
+    , `Post foo_0 user`
+    , 'USER API MANAGEMENT'
+);
+
+
+// Send POST message with a bad payload and check that it does lead to a managed error.
+Check.error = v => !!v['result'] && v.result === 'failed';
+ApiTest.post(
+    `/post/user`
+    , { bad_value: 'bad_content' }
+    , (v) => Check.error(v)
+    , `Post a bad payload to add user`
+    , 'USER API MANAGEMENT'
+);
+
+// You have access to 'testFor' function calling the s => { ... } function for all [ 'foo_1', ... ] list elements.
+ApiTest.testFor(['foo_1', 'foo_2', 'foo_3'], s => {
+  ApiTest.post(
+    `/post/user`
+    , { name: s }
+    , (v) => Check.success(v)
+    , `Post ${s} user`
+    , 'USER API MANAGEMENT'
+  );
+});
+
+// When every test is declared use ApiTest.run() function to run everything.
 ApiTest.run();
 ```
 
-then run tests with
+Then run tests using node interpreter
 
 ```
-node any.js --help
+$ node tests/hello/hello.js --help
 
-Usage: any [options] <url>
+Usage: hello [options] <url>
 
 Options:
   -ss, --selfSigned <bool>              Accept Self Signed Certificate
@@ -60,4 +98,6 @@ Options:
   -m, --matching <string>               Execute tests matching given string
   -pn, --productName <string>           Execute parametered product named tests
   -h, --help                            display help for command
+
+$ node tests/hello/hello.js http://127.0.0.1:4200/
 ```
