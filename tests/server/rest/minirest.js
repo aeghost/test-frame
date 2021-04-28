@@ -16,7 +16,7 @@ class MiniServer {
 
     app.get('/add/user/:name', (req, res) => {
       const name = req.params.name;
-      Log.log(`Asked /add/user/:${name}`);
+      Log.log(`Asked /add/user/${name}`);
       try {
         this.users.push(name);
 
@@ -36,7 +36,7 @@ class MiniServer {
 
     app.get('/user/:pos', (req, res) => {
       const pos = parseInt(req.params.pos);
-      Log.log(`Asked /user/:${pos}`);
+      Log.log(`Asked /user/${pos}`);
       try {
         const name = this.users[pos];
 
@@ -51,6 +51,34 @@ class MiniServer {
           error: e
         });
         Log.error('get', '/user/:pos', e);
+      }
+    });
+
+    app.post('/post/user', (req, res) => {
+      const payload = req.body;
+      Log.log(`POST /post/user/ with ${JSON.stringify(payload)}`);
+      try {
+        if (!!payload['name']) {
+          res.send({
+            result: 'success',
+            datas: { name: payload.name }
+          });
+        } else {
+          res.send({
+            result: 'failed',
+            error: 'No_name_given',
+            wanted: { name: 'string' },
+            given: payload
+          });
+        }
+      } catch (e) {
+        res.send({
+          result: 'failed',
+          error: e,
+          wanted: { name: 'string' },
+          given: payload
+        });
+        Log.error('post', '/post/user', e);
       }
     });
   }

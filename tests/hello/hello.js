@@ -41,4 +41,16 @@ ApiTest.testFor(['1', '2', '3'], s => {
   );
 });
 
+Check.success = v => !!v['result'] && v.result === 'success';
+
+ApiTest.testFor(['foo_0', 'foo_2', 'foo_3'], s => {
+  ApiTest.post(
+    `/post/user`
+    , { name: s }
+    , (v) => Check.success(v)
+    , `Post ${s} user`
+    , 'USER API MANAGEMENT'
+  );
+});
+
 ApiTest.run();
